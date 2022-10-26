@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace LibraryRepository.LibraryRepository
 {
-    public class LibraryBR :ILibraryBR
+    public class LibraryBR : ILibraryBR
     {
-       private readonly LibraryContext _libraryContext;
+        private readonly LibraryContext _libraryContext;
 
         public LibraryBR(LibraryContext libraryContext)
         {
@@ -25,25 +25,22 @@ namespace LibraryRepository.LibraryRepository
             {
                 AuthorName = author.AuthorName
             };
-           _libraryContext.Authors.Add(_author);
+            _libraryContext.Authors.Add(_author);
             _libraryContext.SaveChanges();
             return _author;
         }
 
         public List<Author> GetAuthors()
         {
-           return _libraryContext.Authors.ToList();
+            return _libraryContext.Authors.ToList();
         }
 
         public List<GetBooksList> GetBooksList()
         {
             var list = (from b in _libraryContext.Books
-                        join a in _libraryContext.Authors
-                        on b.AuthorId equals a.AuthorId
-                        join c in _libraryContext.Categories
-                        on b.Categoryid equals c.CategoryId
-                        join p in _libraryContext.Publishers
-                        on b.PublisherId equals p.PublisherId
+                        join a in _libraryContext.Authors on b.AuthorId equals a.AuthorId
+                        join c in _libraryContext.Categories on b.Categoryid equals c.CategoryId
+                        join p in _libraryContext.Publishers on b.PublisherId equals p.PublisherId
                         select new GetBooksList
                         {
                             BookName = b.BookName,
@@ -58,14 +55,12 @@ namespace LibraryRepository.LibraryRepository
         public List<BooksReadByReader> GetBooksReadListByUserID(int Id)
         {
             var List = (from re in _libraryContext.Reports
-                        join b in _libraryContext.Books
-                        on re.BookId equals b.BookId
-                        join r in _libraryContext.Readers
-                        on re.ReaderId equals r.ReaderId
-                        where r.ReaderId == Id && re.StatusId ==1
+                        join b in _libraryContext.Books on re.BookId equals b.BookId
+                        join r in _libraryContext.Readers on re.ReaderId equals r.ReaderId
+                        where r.ReaderId == Id && re.StatusId == 1
                         select new BooksReadByReader
                         {
-                            Name =r.Name,
+                            Name = r.Name,
                             BookName = b.BookName
 
                         }).ToList();
@@ -123,56 +118,53 @@ namespace LibraryRepository.LibraryRepository
         {
             var _reportResponse = new Report()
             {
-                 IssueDate = reportResponse.IssueDate,
-                 DueDate = reportResponse.DueDate,
-                 Returndate =reportResponse.Returndate,
-                 BookId = reportResponse.BookId,
-                 ReaderId = reportResponse.ReaderId,
-                 StaffId = reportResponse.StaffId,
-                 StatusId = reportResponse.StatusId
+                IssueDate = reportResponse.IssueDate,
+                DueDate = reportResponse.DueDate,
+                Returndate = reportResponse.Returndate,
+                BookId = reportResponse.BookId,
+                ReaderId = reportResponse.ReaderId,
+                StaffId = reportResponse.StaffId,
+                StatusId = reportResponse.StatusId
             };
             _libraryContext.Reports.Add(_reportResponse);
             _libraryContext.SaveChanges();
             return _reportResponse;
         }
-        public List<GetReportsResponse>GetReports(int Id)
+        public List<GetReportsResponse> GetReports(int Id)
         {
-            var list =(from re in _libraryContext.Reports
-                       join b in _libraryContext.Books
-                       on re.BookId equals b.BookId
-                       join r in _libraryContext.Readers
-                       on re.ReaderId equals r.ReaderId
-                       join s in _libraryContext.Staff
-                       on re.StaffId equals s.StaffId
-                       join st in _libraryContext.Statuses
-                       on re.StatusId equals st.StatusId
-                       where re.ReportId ==Id
-                       select new GetReportsResponse
-                       {
-                           ReportId = re.ReportId,
-                           IssueDate = re.IssueDate,
-                           DueDate=re.DueDate,
-                           Returndate = re.Returndate,
-                           BookName = b.BookName,
-                           Name = r.Name,
-                           StaffName = s.StaffName,
-                           Status1 = st.Status1
-                       }).ToList();
+            var list = (from re in _libraryContext.Reports
+                        join b in _libraryContext.Books on re.BookId equals b.BookId
+                        join r in _libraryContext.Readers on re.ReaderId equals r.ReaderId
+                        join s in _libraryContext.Staff on re.StaffId equals s.StaffId
+                        join st in _libraryContext.Statuses on re.StatusId equals st.StatusId
+                        where re.ReportId == Id
+                        select new GetReportsResponse
+                        {
+                            ReportId = re.ReportId,
+                            IssueDate = re.IssueDate,
+                            DueDate = re.DueDate,
+                            Returndate = re.Returndate,
+                            BookName = b.BookName,
+                            Name = r.Name,
+                            StaffName = s.StaffName,
+                            Status1 = st.Status1
+                        }).ToList();
 
             return list;
         }
-        public Report UpdateReports(int Id,UpdateReports updateReports)
+        public Report UpdateReports(int Id, UpdateReports updateReports)
         {
             var _report = _libraryContext.Reports.FirstOrDefault(n => n.ReportId == Id);
-            if(_report != null)
+            if (_report != null)
             {
-                _report.Returndate = updateReports.Returndate ;
-                _report.StatusId = updateReports.StatusId ;
+                _report.Returndate = updateReports.Returndate;
+                _report.StatusId = updateReports.StatusId;
                 _libraryContext.SaveChanges();
             }
             return _report;
         }
-        
+
+
 
     }
 }
